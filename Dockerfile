@@ -3,6 +3,8 @@ FROM tomcat:7-jre8
 
 # Create pega directory for storing applications
 RUN mkdir -p /opt/pega
+RUN mkdir  -p /opt/pega/prsysmgmt
+RUN mkdir -p /opt/pega/prweb
 
 # Setup global database variables
 ENV DB_USERNAME=pega \
@@ -33,7 +35,7 @@ ENV MAX_THREADS=300 \
     INDEX_DIRECTORY=NONE \
     HEAP_DUMP_PATH=/heapdumps \
     NODE_ID=NONE
-ENV JAVA_OPTS -Xms2048m -Xmx4096m
+ENV JAVA_OPTS -Xms256m -Xmx512m
 
 # Configure Remote JMX support and bind to port 9001
 ENV JMX_PORT=9001 \
@@ -52,6 +54,9 @@ COPY bin /usr/local/tomcat/bin/
 
 # Copy in and configure customized entry point script
 COPY docker-entrypoint.sh  /
+
+# copy the database driver
+COPY driver/postgresql-42.2.2.jar  /usr/local/tomcat/lib/
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["run"]
